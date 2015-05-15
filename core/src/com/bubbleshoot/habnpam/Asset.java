@@ -12,12 +12,9 @@ import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 public class Asset {
 
@@ -28,7 +25,8 @@ public class Asset {
     public final float w, h;
 
     private String ttfFile = "soupofjustice.ttf";
-    public Sprite menuBackground;
+    public Sprite menuBackground1, menuBackground2;
+
 
     public ImageButton sound, sound_mute;
     public Asset(){
@@ -36,9 +34,15 @@ public class Asset {
         h = Gdx.graphics.getHeight();
 
         manager = new AssetManager();
-        menuBackground = new Sprite(new Texture("space-background.png"));
-        menuBackground.setSize(w,h);
 
+        //There are 2 backgrounds because they will
+        //be used for inifite scrolling.
+        menuBackground1 = new Sprite(new Texture("bg_1_1.png"));
+        menuBackground1.setSize(w,h);
+
+        menuBackground2 = new Sprite(new Texture("bg_1_1.png"));
+        menuBackground2.setSize(w,h);
+        menuBackground2.setPosition(w,0);
 
 
         FileHandleResolver resolver = new InternalFileHandleResolver();
@@ -52,7 +56,7 @@ public class Asset {
 
         parameter.fontFileName = ttfFile;
         parameter.fontParameters.size = 22;
-        parameter.fontParameters.color = Color.BLUE;
+        parameter.fontParameters.color = Color.WHITE;
         manager.load(ttfFile, BitmapFont.class, parameter);
 
 

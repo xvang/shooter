@@ -81,17 +81,20 @@ public class Menu extends BaseScreen {
     @Override
     public void show(){
         Gdx.input.setInputProcessor(this.stage);
-        //test.
-    }
 
+    }
+ //
     @Override
     public void render(float delta){
 
         batch.begin();
-        s.assets.menuBackground.draw(batch);
+        background1.draw(batch);
+        background2.draw(batch);
         batch.end();
 
         stage.draw();
+
+        scrollBackground();
     }
 
     @Override

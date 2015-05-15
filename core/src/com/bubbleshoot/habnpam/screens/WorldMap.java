@@ -15,7 +15,7 @@ public class WorldMap extends BaseScreen {
         menuButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent e, float x, float y) {
-                System.out.println("Map");
+
                 s.setScreen(s.menu);
             }
         });
@@ -30,10 +30,13 @@ public class WorldMap extends BaseScreen {
     public void render(float delta){
 
         batch.begin();
-        s.assets.menuBackground.draw(batch);
+        background1.draw(batch);
+        background2.draw(batch);
         batch.end();
 
         stage.draw();
+
+        scrollBackground();
 
     }
 
