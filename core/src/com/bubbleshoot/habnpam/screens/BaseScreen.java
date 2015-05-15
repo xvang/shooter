@@ -28,8 +28,8 @@ public abstract class BaseScreen extends ScreenAdapter {
     Skin skin; //pointer to the Skin created in Asset
 
     TextButton menuButton;
-
-
+    Sprite background1, background2; //pointer to the scrolling background sprites.
+    public final float SCROLL_SPEED = 0.8f; //scroll speed for background.
     public BaseScreen(Shooter shooter){
         s = shooter;
 
@@ -37,6 +37,9 @@ public abstract class BaseScreen extends ScreenAdapter {
         batch = new SpriteBatch();
         masterTable = new Table();
         skin = s.assets.uiSkin;
+
+        background1 = s.assets.menuBackground1;
+        background2 = s.assets.menuBackground2;
 
         //A ClickListener cannot be added to menuButton here.
         menuButton = new TextButton("Menu", s.assets.buttonStyle);
@@ -93,4 +96,28 @@ public abstract class BaseScreen extends ScreenAdapter {
         stage.getViewport().update(x, y, false);
     }
 
+
+    //This makes the makes the background infinitely scroll.
+    public void scrollBackground(){
+
+
+        background1.setPosition(background1.getX() - SCROLL_SPEED, 0);
+        background2.setPosition(background2.getX() - SCROLL_SPEED, 0);
+
+        //if the first background is almost done scrolling(1 pixel away...?).
+        //the next iteration, the second background should move to (0,0)
+        //and the first background should be completely off the screen to the left.
+        //so we re-position the first background to be right after the second background.
+        //...and vice-versa
+        if (background1.getX() + background1.getWidth() <= 2){
+            background1.setPosition(background2.getX() + background2.getWidth() - 2, 0);
+            System.out.println("BACKGROUND1");
+        }
+
+        if (background2.getX() + background2.getWidth() <= 2){
+            background2.setPosition(background1.getX() + background1.getWidth() - 2, 0);
+            System.out.println("BACKGROUND2");
+
+        }
+    }
 }
