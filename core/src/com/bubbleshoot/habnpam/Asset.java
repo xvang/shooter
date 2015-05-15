@@ -5,13 +5,19 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGeneratorLoader;
 import com.badlogic.gdx.graphics.g2d.freetype.FreetypeFontLoader;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 
 public class Asset {
 
@@ -21,32 +27,44 @@ public class Asset {
     public TextButton.TextButtonStyle buttonStyle;
     public final float w, h;
 
+    private String ttfFile = "soupofjustice.ttf";
+    public Sprite menuBackground;
 
+    public ImageButton sound, sound_mute;
     public Asset(){
         w = Gdx.graphics.getWidth();
         h = Gdx.graphics.getHeight();
 
         manager = new AssetManager();
+        menuBackground = new Sprite(new Texture("space-background.png"));
+        menuBackground.setSize(w,h);
+
+
+
         FileHandleResolver resolver = new InternalFileHandleResolver();
 
         manager.setLoader(FreeTypeFontGenerator.class, new FreeTypeFontGeneratorLoader(resolver));
         manager.setLoader(BitmapFont.class, ".ttf", new FreetypeFontLoader(resolver));
 
+
         FreetypeFontLoader.FreeTypeFontLoaderParameter parameter =
                 new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 
-        parameter.fontFileName = "kenvector_future_thin.ttf";
-        parameter.fontParameters.size = 20;
-        manager.load("kenvector_future_thin.ttf", BitmapFont.class, parameter);
+        parameter.fontFileName = ttfFile;
+        parameter.fontParameters.size = 22;
+        parameter.fontParameters.color = Color.BLUE;
+        manager.load(ttfFile, BitmapFont.class, parameter);
 
 
         //Load in the assets files.
         manager.load("adventure.pack", TextureAtlas.class);
+
         manager.finishLoading();
 
         //getting the files.
         TextureAtlas textureAtlas = manager.get("adventure.pack", TextureAtlas.class);
-        font = manager.get("kenvector_future_thin.ttf", BitmapFont.class);
+        font = manager.get(ttfFile, BitmapFont.class);
+
 
         //Creating the skin.
         uiSkin = new Skin();
@@ -61,7 +79,7 @@ public class Asset {
     }
 
     public void dispose(){
-        manager.unload("kenvector_future_thin.ttf");
+        manager.unload(ttfFile);
         manager.unload("adventure.pack");
     }
 }

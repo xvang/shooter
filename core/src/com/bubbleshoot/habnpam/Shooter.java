@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.bubbleshoot.habnpam.screens.Instruction;
 import com.bubbleshoot.habnpam.screens.Menu;
 import com.bubbleshoot.habnpam.screens.Setting;
-import com.bubbleshoot.habnpam.screens.Profile;
+import com.bubbleshoot.habnpam.screens.ProfileScreen;
 import com.bubbleshoot.habnpam.screens.WorldMap;
 
 public class Shooter extends Game {
@@ -15,19 +15,22 @@ public class Shooter extends Game {
 	public Instruction instruction;
 	public Menu menu;
 	public Setting setting;
-	public Profile profile;
+	public ProfileScreen profileScreen;
 	public WorldMap worldMap;
 	public Asset assets;
+
+	public Profile profile;
 
 	@Override
 	public void create () {
 
 		assets = new Asset();
+		profile = new Profile();
 
 		instruction = new Instruction(this);
 		menu = new Menu(this);
 		setting = new Setting(this);
-		profile = new Profile(this);
+		profileScreen = new ProfileScreen(this);
 		worldMap = new WorldMap(this);
 
 		this.setScreen(menu);
