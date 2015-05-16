@@ -29,7 +29,7 @@ public abstract class BaseScreen extends ScreenAdapter {
 
     TextButton menuButton;
     Sprite background1, background2; //pointer to the scrolling background sprites.
-    public final float SCROLL_SPEED = 0.8f; //scroll speed for background.
+    public final float SCROLL_SPEED = 0.4f; //scroll speed for background.
     public BaseScreen(Shooter shooter){
         s = shooter;
 
@@ -111,13 +111,11 @@ public abstract class BaseScreen extends ScreenAdapter {
         //...and vice-versa
         if (background1.getX() + background1.getWidth() <= 2){
             background1.setPosition(background2.getX() + background2.getWidth() - 2, 0);
-            System.out.println("BACKGROUND1");
         }
 
         if (background2.getX() + background2.getWidth() <= 2){
             background2.setPosition(background1.getX() + background1.getWidth() - 2, 0);
-            System.out.println("BACKGROUND2");
-
         }
+
     }
 }

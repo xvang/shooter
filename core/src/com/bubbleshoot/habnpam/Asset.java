@@ -21,7 +21,7 @@ public class Asset {
     public AssetManager manager;
     public BitmapFont font;
     public Skin uiSkin;
-    public TextButton.TextButtonStyle buttonStyle;
+    public TextButton.TextButtonStyle buttonStyle, buttonLocked, buttonUnlocked;
     public final float w, h;
 
     private String ttfFile = "soupofjustice.ttf";
@@ -55,7 +55,7 @@ public class Asset {
                 new FreetypeFontLoader.FreeTypeFontLoaderParameter();
 
         parameter.fontFileName = ttfFile;
-        parameter.fontParameters.size = 22;
+        parameter.fontParameters.size = 24;
         parameter.fontParameters.color = Color.WHITE;
         manager.load(ttfFile, BitmapFont.class, parameter);
 
@@ -80,6 +80,18 @@ public class Asset {
         buttonStyle.fontColor = Color.BLACK;
         buttonStyle.up = uiSkin.getDrawable("buttonLong_grey");
         buttonStyle.down = uiSkin.getDrawable("buttonLong_beige");
+
+        buttonLocked = new TextButton.TextButtonStyle();
+        buttonLocked.font = font;
+        buttonLocked.fontColor = Color.BLACK;
+        buttonLocked.up = uiSkin.getDrawable("buttonSquare_blue");
+        buttonLocked.down = uiSkin.getDrawable("buttonSquare_brown");
+
+        buttonUnlocked = new TextButton.TextButtonStyle();
+        buttonUnlocked.font = font;
+        buttonUnlocked.fontColor = Color.BLACK;
+        buttonUnlocked.up = uiSkin.getDrawable("buttonSquare_grey");
+        buttonUnlocked.down = uiSkin.getDrawable("buttonSquare_brown");
     }
 
     public void dispose(){
