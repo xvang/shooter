@@ -8,6 +8,7 @@ import com.bubbleshoot.habnpam.screens.Menu;
 import com.bubbleshoot.habnpam.screens.Setting;
 import com.bubbleshoot.habnpam.screens.ProfileScreen;
 import com.bubbleshoot.habnpam.screens.WorldMap;
+import com.bubbleshoot.habnpam.tests.Box2dTest;
 
 public class Shooter extends Game {
 
@@ -33,7 +34,8 @@ public class Shooter extends Game {
 		profileScreen = new ProfileScreen(this);
 		worldMap = new WorldMap(this);
 
-		this.setScreen(menu);
+		//this.setScreen(menu);
+		this.setScreen(new Box2dTest());
 	}
 
 	@Override
