@@ -109,12 +109,12 @@ public abstract class BaseScreen extends ScreenAdapter {
         //and the first background should be completely off the screen to the left.
         //so we re-position the first background to be right after the second background.
         //...and vice-versa
-        if (background1.getX() + background1.getWidth() <= 2){
-            background1.setPosition(background2.getX() + background2.getWidth() - 2, 0);
+        if (background1.getX() + background1.getWidth() <= 5){
+            background1.setPosition(background2.getX() + background2.getWidth() - 5, 0);
         }
 
-        if (background2.getX() + background2.getWidth() <= 2){
-            background2.setPosition(background1.getX() + background1.getWidth() - 2, 0);
+        if (background2.getX() + background2.getWidth() <= 5){
+            background2.setPosition(background1.getX() + background1.getWidth() - 5, 0);
         }
 
     }

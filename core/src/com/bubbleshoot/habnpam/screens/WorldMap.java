@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.bubbleshoot.habnpam.Level;
 import com.bubbleshoot.habnpam.Shooter;
 
 public class WorldMap extends BaseScreen {
@@ -21,6 +22,8 @@ public class WorldMap extends BaseScreen {
             }
         });
 
+
+
         //for-loop adds in all the buttons that point to the levels.
         for(int x = 0; x < s.profile.numberOfLevels; x++){
 
@@ -36,13 +39,24 @@ public class WorldMap extends BaseScreen {
             //add button to table.
             //we want 4 buttons per row.
             if((x+1) % 5 == 0 && x > 0)
-                masterTable.add(a).pad(10).row();
+                masterTable.add(a).pad(20).row();
             else
-                masterTable.add(a).pad(10);
+                masterTable.add(a).pad(20);
 
-
-
+            //Add Listeners to the buttons.
+            //The listeners change the screen to the gameplay screen.
+            final int xx = x;
+            a.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent e, float x, float y){
+                    final Level level = new Level(xx+1);
+                    s.setScreen(new GameScreen(level, s));
+                }
+            });
         }
+
+
+
 
         masterTable.setPosition(s.assets.w/2, s.assets.h/2);
         stage.addActor(masterTable);

@@ -7,6 +7,8 @@ import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEffectPool;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -29,6 +31,9 @@ public class Asset {
 
 
     public ImageButton sound, sound_mute;
+
+    public ParticleEffectPool effectPool;
+    private ParticleEffect singleParticle;
     public Asset(){
         w = Gdx.graphics.getWidth();
         h = Gdx.graphics.getHeight();
@@ -92,6 +97,21 @@ public class Asset {
         buttonUnlocked.fontColor = Color.BLACK;
         buttonUnlocked.up = uiSkin.getDrawable("buttonSquare_grey");
         buttonUnlocked.down = uiSkin.getDrawable("buttonSquare_brown");
+
+
+
+
+
+        //creating the particles.
+        singleParticle = new ParticleEffect();
+        singleParticle.load(Gdx.files.internal("particles/p1.p"),
+                Gdx.files.internal("particles/"));
+
+        singleParticle.start();
+        singleParticle.setEmittersCleanUpBlendFunction(false);
+        effectPool = new ParticleEffectPool(singleParticle, 0, 1000);
+
+
     }
 
     public void dispose(){
