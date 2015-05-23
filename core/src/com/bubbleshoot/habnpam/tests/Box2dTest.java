@@ -8,67 +8,78 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-
-import aurelienribon.bodyeditor.BodyEditorLoader;
-
+import com.badlogic.gdx.utils.Array;
+import com.bubbleshoot.habnpam.Scaling;
 
 public class Box2dTest extends ScreenAdapter implements InputProcessor {
 
-
-    private World world;
+    World world = new World(new Vector2(0, -100), true);
     Box2DDebugRenderer debugRenderer;
     OrthographicCamera camera;
-    Body bottleModel;
-    Vector2 bottleModelOrigin;
-    private Sprite bottleSprite;
-    private Texture bottleTexture;
+    static final float BOX_STEP=1/60f;
+    static final int BOX_VELOCITY_ITERATIONS=6;
+    static final int BOX_POSITION_ITERATIONS=2;
+    static final float WORLD_TO_BOX=0.01f;
+    static final float BOX_WORLD_TO=100f;
 
-    private static final float BOTTLE_WIDTH = 8;
+    Body body;
 
+
+    SpriteBatch batch;
+    Sprite background;
+    Scaling scale;
     public Box2dTest(){
-        world = new World(new Vector2(0, -10), true);
-        debugRenderer = new Box2DDebugRenderer();
+
+        scale = new Scaling();
+        batch = new SpriteBatch();
+        background = new Sprite(new Texture("space-background.png"));
+        background.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        background.setPosition(0,0);
+        //http://joelotter.com/pixels-are-evil/
         camera = new OrthographicCamera();
+        camera.viewportHeight = 320;
+        camera.viewportWidth = 480;
+        camera.position.set(camera.viewportWidth * .5f, camera.viewportHeight * .5f, 0f);
+        camera.update();
+        //Ground body
+        BodyDef groundBodyDef =new BodyDef();
+        groundBodyDef.position.set(new Vector2(0, 10));
+        Body groundBody = world.createBody(groundBodyDef);
+        PolygonShape groundBox = new PolygonShape();
+        groundBox.setAsBox((camera.viewportWidth) * 2, 10.0f);
+        groundBody.createFixture(groundBox, 0.0f);
 
-        BodyEditorLoader loader = new BodyEditorLoader(Gdx.files.internal("physics/test.json"));
-
-        BodyDef bd = new BodyDef();
-        bd.position.set(0,0);
-        bd.type = BodyDef.BodyType.DynamicBody;
-
-        FixtureDef fd = new FixtureDef();
-        fd.density = 1;
-        fd.friction = 0.5f;
-        fd.restitution = 0.3f;
-
-        bottleModel = world.createBody(bd);
-
-        loader.attachFixture(bottleModel, "test01", fd, BOTTLE_WIDTH);
-
-        bottleModelOrigin = new Vector2();
-        bottleModelOrigin = loader.getOrigin("test01", BOTTLE_WIDTH).cpy();
+        //Dynamic Body
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(camera.viewportWidth / 2, camera.viewportHeight*3 / 4);
+        body = world.createBody(bodyDef);
+        CircleShape dynamicCircle = new CircleShape();
+        dynamicCircle.setRadius(5f);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = dynamicCircle;
+        fixtureDef.density = 1.0f;
+        fixtureDef.friction = 0.0f;
+        fixtureDef.restitution = 2;
+        body.createFixture(fixtureDef);
 
 
-        bottleTexture = new Texture(Gdx.files.internal("badlogic.jpg"));
-        bottleTexture.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        debugRenderer = new Box2DDebugRenderer();
 
-        bottleSprite = new Sprite(bottleTexture);
-        bottleSprite.setSize(BOTTLE_WIDTH, BOTTLE_WIDTH*bottleSprite.getHeight()/bottleSprite.getWidth());
-
-
-
+        dynamicCircle.dispose();
     }
 
     @Override
     public void show(){
-
         Gdx.input.setInputProcessor(this);
     }
 
@@ -76,15 +87,11 @@ public class Box2dTest extends ScreenAdapter implements InputProcessor {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        Vector2 bottlePos = bottleModel.getPosition().sub(bottleModelOrigin);
-        bottleSprite.setPosition(bottlePos.x, bottlePos.y);
-        bottleSprite.setOrigin(bottleModelOrigin.x, bottleModelOrigin.y);
-        bottleSprite.setRotation(bottleModel.getAngle() * MathUtils.radiansToDegrees);
-
+        batch.begin();
+        background.draw(batch);
+        batch.end();
         debugRenderer.render(world, camera.combined);
-        world.step(1/60f, 6, 2);
-
+        world.step(BOX_STEP, BOX_VELOCITY_ITERATIONS, BOX_POSITION_ITERATIONS);
     }
 
 
@@ -96,7 +103,8 @@ public class Box2dTest extends ScreenAdapter implements InputProcessor {
 
     @Override
     public void resize(int x, int y){
-
+        if (y < x){
+        }
     }
 
     @Override
@@ -109,7 +117,45 @@ public class Box2dTest extends ScreenAdapter implements InputProcessor {
     @Override
     public boolean touchDown(int x, int y, int pointer, int button) {
 
+        Array<Body> bodies = new Array<Body>();
 
+        world.getBodies(bodies);
+
+        for(Body body: bodies) {
+            if (body.getType().equals(BodyDef.BodyType.DynamicBody)) {
+                System.out.println(body.getPosition());
+                System.out.println();
+                System.out.println("-----");
+            }
+
+        }
+        /*int height = Gdx.graphics.getHeight();
+        System.out.println("viewportwidth: " + String.valueOf(camera.viewportWidth));
+        System.out.println("x: " + String.valueOf(x));
+        System.out.println("body = " + String.valueOf(body.getLocalVector(new Vector2())));
+        //Dynamic Body
+
+        //Bodydef defines the shape and type.
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(x/2, y / 2);
+
+        //body is just a pointer. world.createbody() can be by itself.
+        body = world.createBody(bodyDef);
+        CircleShape dynamicCircle = new CircleShape();
+        dynamicCircle.setRadius(4f);
+
+        //FixtureDef defines the property.
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = dynamicCircle;
+        fixtureDef.density = 1.0f;
+        fixtureDef.friction = 0.4f;
+        fixtureDef.restitution = 1;
+
+        //Body is the actual object.
+        body.createFixture(fixtureDef);
+
+        dynamicCircle.dispose();*/
         return false;
     }
 
@@ -119,7 +165,26 @@ public class Box2dTest extends ScreenAdapter implements InputProcessor {
     }
 
     @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
+    public boolean touchDragged(int x, int y, int pointer) {
+
+        /*int height = Gdx.graphics.getHeight();
+        System.out.println("Creating new Circles.");
+        //Dynamic Body
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(x, camera.viewportHeight / 2);
+        body = world.createBody(bodyDef);
+        CircleShape dynamicCircle = new CircleShape();
+        dynamicCircle.setRadius(4f);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = dynamicCircle;
+        fixtureDef.density = 1.0f;
+        fixtureDef.friction = 0.4f;
+        fixtureDef.restitution = 1;
+        body.createFixture(fixtureDef);
+
+        dynamicCircle.dispose();*/
+
         return false;
     }
 
