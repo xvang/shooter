@@ -104,6 +104,7 @@ public class Box2dTest extends ScreenAdapter implements InputProcessor {
     @Override
     public void resize(int x, int y){
         if (y < x){
+            //this is from ubuntu. will this work?
         }
     }
 
